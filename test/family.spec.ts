@@ -21,6 +21,23 @@ describe("Family tests", () => {
         const daughter = 'Minerva';
         const minerva = family.addChild(mother, daughter, FEMALE);
         assert.equal(minerva.getMother().getName(), mother);
-    })
+    });
 
+    it('Dominique\'s siblings', async () => {
+        const name = 'Dominique';
+        const relatives = await family.getRelationship(name,'Siblings');
+        assert.equal(relatives.join(' '), 'Victoire Louis Minerva');
+    });
+
+    it('Remus\'s maternal aunt', async () => {
+        const name = 'Remus';
+        const relatives = await family.getRelationship(name,'Maternal-Aunt');
+        assert.equal(relatives.join(' '), 'Dominique Minerva');
+    });
+
+    it('Lily\'s sister in law', async () => {
+        const name = 'Lily';
+        const relatives = await family.getRelationship(name,'Sister-In-Law');
+        assert.equal(relatives.join(' '), 'Darcy Alice');
+    });
 });

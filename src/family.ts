@@ -3,7 +3,8 @@
 import fs from 'fs';
 
 import { FamilyMember } from "./member";
-import {DB_DIR, GenderType, ERRORS, FEMALE} from "./definitions";
+import {DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes, DEFAULT_ROOT_AGE} from "./definitions";
+
 
 export class Family {
     protected familyIndex: {[name:string]: FamilyMember} = {};
@@ -27,18 +28,32 @@ export class Family {
 
     }
 
-    public async import(tree):Promise <FamilyMember> {
+    /**
+     * Tree importer from a JSON object
+     *
+     * @since 1.0.0
+     * @param {object} tree data from JSON file
+     * @param {number} age for the purpose of sorting we calculate an age of person if not given, assuming the spouse is the same age and children are born every year, younger 30 years from their parents
+     * @returns {FamilyMember} person added at the current level of recursion, finally the root member is returned
+     *
+     */
+    public async import(tree, age?:number):Promise <FamilyMember> {
         if (tree.name && tree.gender) {
-            const member=new FamilyMember(tree.name, tree.gender, tree.birthDate);
+            age=age||DEFAULT_ROOT_AGE;
+            const born=new Date();
+            born.setFullYear(born.getFullYear()-age);
+            const member=new FamilyMember(tree.name, tree.gender, tree.birthDate||born);
             this.root = this.root || member;
             this.familyIndex[tree.name] = member;
             if (tree.spouse) {
-                const spouse=await this.import(tree.spouse);
+                const spouse=await this.import(tree.spouse, age);
                 spouse && member.addSpouse(spouse);
             }
+
             if (Array.isArray(tree.children) && tree.children.length>0) {
+                age+=30;
                 await Promise.all(tree.children.map(async (descendant)=>{
-                    const child=await this.import(descendant);
+                    const child=await this.import(descendant, age--);
                     child && member.addChild(child);
                 }));
             }
@@ -56,11 +71,29 @@ export class Family {
         if (this.findByName(name))
             throw ERRORS.PERSON_EXIST;
 
-        const child=new FamilyMember(name, gender);
-        mother.addChild(child);
-        return child;
+        this.familyIndex[name] = new FamilyMember(name, gender);
+        mother.addChild(this.familyIndex[name]);
+        return this.familyIndex[name];
     }
 
     public getRoot = () => this.root;
     public findByName = (name: string) => this.familyIndex[name];
+
+    public async getRelationship (personName: string, relationName: RelationType): Promise <string[]> {
+        const person = this.findByName(personName);
+        if (!person)
+            throw ERRORS.PERSON_NOT_FOUND;
+        const relationMethod = relationName.replace(/[^a-z]/gi,'');
+        if (RelationTypes.indexOf(relationName)===-1 || typeof person[relationMethod]!=='function')
+            throw ERRORS.RELATIONSHIP_NOT_FOUND;
+        const relationship = await person[relationMethod].call();
+
+        return relationship
+                .sort((a:FamilyMember, b:FamilyMember)=> {
+                    const aBirthDate = a.getBirthDate();
+                    const bBirthDate = b.getBirthDate();
+                    return aBirthDate > bBirthDate ? 1 : (aBirthDate < bBirthDate ? -1 : 0);
+                })
+                .map((person:FamilyMember) => person.getName());
+    }
 }
