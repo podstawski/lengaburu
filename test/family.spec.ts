@@ -17,10 +17,10 @@ describe("Family tests", () => {
     });
 
     it('add Minerva as Flora\'s daughter', () => {
-        const flora = family.findByName('Flora');
-        const minerva = new FamilyMember('Minerva', FEMALE);
-        flora.addChild(minerva);
-        assert.equal(minerva.getMother(), flora);
+        const mother = 'Flora';
+        const daughter = 'Minerva';
+        const minerva = family.addChild(mother, daughter, FEMALE);
+        assert.equal(minerva.getMother().getName(), mother);
     })
 
 });

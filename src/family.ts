@@ -3,7 +3,7 @@
 import fs from 'fs';
 
 import { FamilyMember } from "./member";
-import { DB_DIR } from "./definitions";
+import {DB_DIR, GenderType, ERRORS, FEMALE} from "./definitions";
 
 export class Family {
     protected familyIndex: {[name:string]: FamilyMember} = {};
@@ -47,6 +47,19 @@ export class Family {
         return null;
     }
 
+    public addChild (motherName:string, name:string, gender:GenderType) {
+        const mother = this.findByName(motherName);
+        if (!mother)
+            throw ERRORS.PERSON_NOT_FOUND;
+        if (mother.getGender()!==FEMALE)
+            throw ERRORS.ONLY_TROUGH_MOTHER;
+        if (this.findByName(name))
+            throw ERRORS.PERSON_EXIST;
+
+        const child=new FamilyMember(name, gender);
+        mother.addChild(child);
+        return child;
+    }
 
     public getRoot = () => this.root;
     public findByName = (name: string) => this.familyIndex[name];
