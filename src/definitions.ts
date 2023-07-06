@@ -1,12 +1,22 @@
 "use strict";
 
 import {FamilyMember} from "./member";
-
 export const MALE:string = 'Male';
 export const FEMALE:string = 'Female';
 
 export type GenderType = typeof MALE | typeof FEMALE;
-export type MembersType = FamilyMember[];
+export type MembersType = (Promise<FamilyMember> | FamilyMember)[];
+
+export const DB_DIR:string = '../db';
+export const RESOURCES_DIR:string = '../resources';
+
+
+export type Relations = {
+    father: Promise<FamilyMember>;
+    mother: Promise<FamilyMember>;
+    spouse: Promise<FamilyMember>;
+    children: Promise<FamilyMember>[];
+}
 
 type Error = {
     code: number;

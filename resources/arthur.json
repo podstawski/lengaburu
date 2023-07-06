@@ -1,0 +1,167 @@
+{
+  "name": "Arthur",
+  "gender": "Male",
+  "spouse": {
+    "name": "Margret",
+    "gender": "Female"
+  },
+  "children": [
+    {
+      "name": "Bill",
+      "gender": "Male",
+      "spouse": {
+        "name": "Flora",
+        "gender": "Female"
+      },
+      "children": [
+        {
+          "name": "Victoire",
+          "gender": "Female",
+          "spouse": {
+            "name": "Ted",
+            "gender": "Male"
+          },
+          "children": [
+            {
+              "name": "Remus",
+              "gender": "Male",
+              "spouse": null,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Dominique",
+          "gender": "Female",
+          "spouse": null,
+          "children": []
+        },
+        {
+          "name": "Louis",
+          "gender": "Male",
+          "spouse": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Charlie",
+      "gender": "Male",
+      "spouse": null
+    },
+    {
+      "name": "Percy",
+      "gender": "Male",
+      "spouse": {
+        "name": "Audrey",
+        "gender": "Female"
+      },
+      "children": [
+        {
+          "name": "Molly",
+          "gender": "Female",
+          "spouse": null,
+          "children": []
+        },
+        {
+          "name": "Lucy",
+          "gender": "Female",
+          "spouse": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Ronald",
+      "gender": "Male",
+      "spouse": {
+        "name": "Helen",
+        "gender": "Female"
+      },
+      "children": [
+        {
+          "name": "Rose",
+          "gender": "Female",
+          "spouse": {
+            "name": "Malfoy",
+            "gender": "Male"
+          },
+          "children": [
+            {
+              "name": "Draco",
+              "gender": "Male",
+              "spouse": null,
+              "children": []
+            },
+            {
+              "name": "Aster",
+              "gender": "Female",
+              "spouse": null,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Hugo",
+          "gender": "Male",
+          "spouse": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Ginerva",
+      "gender": "Female",
+      "spouse": {
+        "name": "Harry",
+        "gender": "Male"
+      },
+      "children": [
+        {
+          "name": "James",
+          "gender": "Male",
+          "spouse": {
+            "name": "Darcy",
+            "gender": "Female"
+          },
+          "children": [
+            {
+              "name": "William",
+              "gender": "Male",
+              "spouse": null,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Albus",
+          "gender": "Male",
+          "spouse": {
+            "name": "Alice",
+            "gender": "Female"
+          },
+          "children": [
+            {
+              "name": "Ron",
+              "gender": "Male",
+              "spouse": null,
+              "children": []
+            },
+            {
+              "name": "Ginny",
+              "gender": "Female",
+              "spouse": null,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Lily",
+          "gender": "Female",
+          "spouse": null,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

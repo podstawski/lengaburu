@@ -10,7 +10,6 @@ describe("Family members tests", () => {
         arthur = new FamilyMember('Arthur', MALE);
         margret = new FamilyMember('Margaret', FEMALE);
         flora = new FamilyMember('Flora', FEMALE);
-
         assert.equal(arthur.getName(), 'Arthur');
     });
 
