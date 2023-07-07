@@ -12,13 +12,13 @@ export class App {
         this.family = new Family(dbName);
     }
 
-    protected usage() {
-        console.warn('Usage parameters:\n',
-            "'import' to import Artur's family\n",
-            "'clean' to clean local data\n",
-            "'test <filename>' to send commands to the application\n");
-    }
-
+    /**
+     * The main action of the app
+     *
+     * @since 1.0.1
+     * @param {string[]} params params passed from cli
+     *
+     */
     public async run(params: string[]) {
         if (params.length===0) {
             return this.usage();
@@ -55,7 +55,13 @@ export class App {
         }
 
     }
-
+    /**
+     * Parser of input rows of a file with test commands
+     *
+     * @since 1.0.1
+     * @param {string[]} commands passed from test file
+     *
+     */
     protected async evaluateCommands(commands: string[]) {
         for (let i=0; i<commands.length; i++) {
             const commandLine=commands[i];
@@ -88,10 +94,23 @@ export class App {
                 console.error(err.short || err);
             }
 
-        };
+        }
     }
-
+    /**
+     * Save family tree to a JSON file
+     *
+     * @since 1.0.1
+     *
+     */
     public async save() {
         return this.needSave && this.family.save();
+    }
+
+
+    protected usage() {
+        console.warn('Usage parameters:\n',
+            "'import' to import Artur's family\n",
+            "'clean' to clean local data\n",
+            "'test <filename>' to send commands to the application\n");
     }
 }

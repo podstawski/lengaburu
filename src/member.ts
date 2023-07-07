@@ -38,6 +38,14 @@ export class FamilyMember {
         }
     }
 
+    /**
+     * Add a child to current person, the child must be an instance of the FamilyMember class
+     * Both parents get the child to their 'children' collections
+     *
+     * @since 1.0.0
+     * @param {FamilyMember} child child instance
+     *
+     */
     public addChild = (child: FamilyMember) => {
         if (!this.spouse) {
             throw ERRORS.NO_SPOUSE;
@@ -50,6 +58,15 @@ export class FamilyMember {
         this.spouse.addChild(child);
     }
 
+    /**
+     * Add a spouse to current person, the spouse must be an instance of the FamilyMember class
+     * The spouse will get the current person as a spouse as well
+     *
+     * @since 1.0.0
+     * @param {FamilyMember} spouse spouse instance
+     * @param {boolean} addingMutual anti-infinity loop flag
+     *
+     */
     public addSpouse = (spouse: FamilyMember, addingMutual?:boolean) => {
         if (this.gender===spouse.getGender()) {
             throw ERRORS.NO_SAME_SEX_MARRIAGE;
@@ -70,8 +87,14 @@ export class FamilyMember {
     public getFather = ():FamilyMember => this.father;
     public setMother = (mother: FamilyMember) => this.mother=mother;
     public setFather = (father: FamilyMember) => this.father=father;
-
     public getBirthDate = ():Date => this.birthDate;
+
+    /**
+     * Export of related people as the text indexes - names
+     *
+     * @since 1.0.0
+     *
+     */
     public exportRelations = () => {
         return {
             father: this.father && this.father.getName() || null,
