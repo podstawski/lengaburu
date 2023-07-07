@@ -12,3 +12,6 @@ npm start clean
 
 ## testing a file
 npm start test examples/minerva.txt
+
+### unit tests
+npm test
