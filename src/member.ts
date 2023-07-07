@@ -11,7 +11,6 @@ export class FamilyMember {
     protected children: MembersType = null;
     protected spouse: FamilyMember = null;
 
-
     constructor(name: string, gender: GenderType, birthDate?: Date|string, relations?: Relations) {
         this.name = name;
         this.gender = gender;
@@ -60,7 +59,7 @@ export class FamilyMember {
     public getFather = ():FamilyMember => this.father;
     public setMother = (mother: FamilyMember) => this.mother=mother;
     public setFather = (father: FamilyMember) => this.father=father;
-    public getChildren = ():MembersType => this.children;
+
     public getBirthDate = ():Date => this.birthDate;
     public exportRelations = () => {
         return {
@@ -69,6 +68,12 @@ export class FamilyMember {
             spouse: this.spouse && this.spouse.getName() || null,
             children: this.children && this.children.map( (child: FamilyMember) => child.getName && child.getName()) || []
         }
+    }
+
+    @SortFamilyMembers()
+    public getChildren ():MembersType {
+        // clone this.children
+        return Object.assign([], this.children);
     }
 
     @SortFamilyMembers()
@@ -98,4 +103,3 @@ export class FamilyMember {
         return spouseSisters.concat(siblingsWives);
     }
 }
-

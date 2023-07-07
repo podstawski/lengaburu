@@ -2,7 +2,10 @@
 
 import fs from 'fs';
 import { FamilyMember } from "./member";
-import {DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes, DEFAULT_ROOT_AGE, DEFAULT_GENERATION_DIFF } from "./definitions";
+import {
+        DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes,
+        DEFAULT_ROOT_AGE, DEFAULT_GENERATION_DIFF
+} from "./definitions";
 
 export class Family {
     protected familyIndex: {[name:string]: FamilyMember} = {};
@@ -48,7 +51,7 @@ export class Family {
             }
 
             if (Array.isArray(tree.children) && tree.children.length>0) {
-                age+=DEFAULT_GENERATION_DIFF;
+                age-=DEFAULT_GENERATION_DIFF;
                 await Promise.all(tree.children.map(async (descendant)=>{
                     const child=await this.import(descendant, age--);
                     child && member.addChild(child);
@@ -68,7 +71,11 @@ export class Family {
         if (this.findByName(name))
             throw ERRORS.PERSON_EXIST;
 
-        this.familyIndex[name] = new FamilyMember(name, gender);
+        const youngestChild = <FamilyMember>(mother.getChildren()).pop();
+        const birthDate=new Date();
+        birthDate.setFullYear( youngestChild && youngestChild.getBirthDate().getFullYear()+1  || mother.getBirthDate().getFullYear()+DEFAULT_GENERATION_DIFF);
+
+        this.familyIndex[name] = new FamilyMember(name, gender, birthDate);
         mother.addChild(this.familyIndex[name]);
         return this.familyIndex[name];
     }

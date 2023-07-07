@@ -23,6 +23,16 @@ describe("Family tests", () => {
         assert.equal(minerva.getMother().getName(), mother);
     });
 
+    it('creating temp marriage to test birthDate calculation of a child of just married couple (no kids yet)', () => {
+        const mother = 'Ginny';
+        const daughter = 'Kate';
+        const ginny = family.findByName('Ginny');
+        const draco = family.findByName('Draco');
+        ginny.addSpouse(draco);
+        const kate = family.addChild(mother, daughter, FEMALE);
+        assert.equal(kate.getMother().getName(), mother);
+    });
+
     it('Dominique\'s siblings', async () => {
         const name = 'Dominique';
         const relatives = await family.getRelationship(name,'Siblings');
