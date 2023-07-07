@@ -1,9 +1,12 @@
 "use strict";
 
 import {FamilyMember} from "./member";
+import type = Mocha.utils.type;
 export const MALE:string = 'Male';
 export const FEMALE:string = 'Female';
 export const DEFAULT_ROOT_AGE = 350;
+export const DEFAULT_GENERATION_DIFF = 30;
+
 export type GenderType = typeof MALE | typeof FEMALE;
 export type MembersType = (Promise<FamilyMember> | FamilyMember)[];
 
@@ -56,5 +59,21 @@ export const ERRORS: {[s: string]: Error} = {
         code: 404,
         message: 'We don\'t support given relation',
         short: 'RELATIONSHIP_NOT_FOUND'
+    }
+}
+
+export const SortFamilyMembers = () => {
+    return (target: any, name: string, descriptor: any) => {
+        const method = descriptor && typeof(descriptor.value)==='function' && descriptor.value;
+
+        descriptor.value = function (...args) {
+            const result = method.apply(this, args);
+            return Array.isArray(result) ? result.sort((a:FamilyMember, b:FamilyMember)=> {
+                const aBirthDate = a.getBirthDate();
+                const bBirthDate = b.getBirthDate();
+                return aBirthDate > bBirthDate ? 1 : (aBirthDate < bBirthDate ? -1 : 0);
+            }) : result;
+        }
+
     }
 }

@@ -1,6 +1,6 @@
 "use strict";
 
-import {GenderType, MembersType, ERRORS, MALE, Relations, FEMALE} from './definitions';
+import {GenderType, MembersType, ERRORS, MALE, Relations, FEMALE, SortFamilyMembers} from './definitions';
 
 export class FamilyMember {
     protected name: string;
@@ -71,11 +71,28 @@ export class FamilyMember {
         }
     }
 
-    public Siblings = ():MembersType => this.mother && this.mother.getChildren().filter((child:FamilyMember)=>child!==this) || [];
-    public MaternalAunt = ():MembersType => this.mother && this.mother.Siblings().filter((aunt:FamilyMember)=>aunt.getGender()===FEMALE) || [];
-    public Sisters = ():MembersType => this.Siblings().filter((sibling:FamilyMember)=>sibling.getGender()===FEMALE) || [];
-    public Brothers = ():MembersType => this.Siblings().filter((sibling:FamilyMember)=>sibling.getGender()===MALE) || [];
-    public SisterInLaw = ():MembersType => {
+    @SortFamilyMembers()
+    public Siblings ():MembersType {
+        return this.mother && this.mother.getChildren().filter((child:FamilyMember)=>child!==this) || [];
+    }
+
+    @SortFamilyMembers()
+    public MaternalAunt ():MembersType {
+        return this.mother && this.mother.Siblings().filter((aunt: FamilyMember) => aunt.getGender() === FEMALE) || [];
+    }
+
+    @SortFamilyMembers()
+    public Sisters ():MembersType {
+        return this.Siblings().filter((sibling:FamilyMember)=>sibling.getGender()===FEMALE) || [];
+    }
+
+    @SortFamilyMembers()
+    public Brothers ():MembersType {
+        return this.Siblings().filter((sibling: FamilyMember) => sibling.getGender() === MALE) || [];
+    }
+
+    @SortFamilyMembers()
+    public SisterInLaw ():MembersType {
         const spouseSisters = this.spouse && this.spouse.Sisters() || [];
         const siblingsWives = this.Brothers().filter((brother:FamilyMember)=>brother.getSpouse()).map((brother:FamilyMember)=>brother.getSpouse());
         return spouseSisters.concat(siblingsWives);

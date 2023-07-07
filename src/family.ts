@@ -1,10 +1,8 @@
 "use strict";
 
 import fs from 'fs';
-
 import { FamilyMember } from "./member";
-import {DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes, DEFAULT_ROOT_AGE} from "./definitions";
-
+import {DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes, DEFAULT_ROOT_AGE, DEFAULT_GENERATION_DIFF } from "./definitions";
 
 export class Family {
     protected familyIndex: {[name:string]: FamilyMember} = {};
@@ -25,7 +23,6 @@ export class Family {
             const tree=require(this.dbPath);
             return this.import(tree);
         }
-
     }
 
     /**
@@ -51,7 +48,7 @@ export class Family {
             }
 
             if (Array.isArray(tree.children) && tree.children.length>0) {
-                age+=30;
+                age+=DEFAULT_GENERATION_DIFF;
                 await Promise.all(tree.children.map(async (descendant)=>{
                     const child=await this.import(descendant, age--);
                     child && member.addChild(child);
@@ -86,14 +83,7 @@ export class Family {
         const relationMethod = relationName.replace(/[^a-z]/gi,'');
         if (RelationTypes.indexOf(relationName)===-1 || typeof person[relationMethod]!=='function')
             throw ERRORS.RELATIONSHIP_NOT_FOUND;
-        const relationship = await person[relationMethod].call();
-
-        return relationship
-                .sort((a:FamilyMember, b:FamilyMember)=> {
-                    const aBirthDate = a.getBirthDate();
-                    const bBirthDate = b.getBirthDate();
-                    return aBirthDate > bBirthDate ? 1 : (aBirthDate < bBirthDate ? -1 : 0);
-                })
-                .map((person:FamilyMember) => person.getName());
+        const relationship = await person[relationMethod].call(person);
+        return relationship.map((person:FamilyMember) => person.getName());
     }
 }
