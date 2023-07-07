@@ -2,10 +2,7 @@
 
 import fs from 'fs';
 import { FamilyMember } from "./member";
-import {
-        DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes,
-        DEFAULT_ROOT_AGE, DEFAULT_GENERATION_DIFF
-} from "./definitions";
+import { DB_DIR, GenderType, ERRORS, FEMALE, RelationType, RelationTypes, DEFAULT_ROOT_AGE, DEFAULT_GENERATION_DIFF} from "./definitions";
 
 export class Family {
     protected familyIndex: {[name:string]: FamilyMember} = {};
@@ -21,10 +18,79 @@ export class Family {
         }
     }
 
+    /**
+     * Opens the JSON file as a database
+     *
+     * @since 1.0.1
+     *
+     */
     public async open() {
         if (this.dbPath && fs.existsSync(this.dbPath)) {
-            const tree=require(this.dbPath);
-            return this.import(tree);
+            const dataTxt=fs.readFileSync(this.dbPath, {encoding: 'utf-8'});
+            try {
+                const data = JSON.parse(dataTxt);
+                if (Array.isArray(data.members)) {
+                    data.members.map(member=>{
+                       this.familyIndex[member.name] = new FamilyMember(member.name, member.gender, member.birthDate);
+                    });
+                    data.members.map(member=>{
+                        if (member.relations) {
+                            for (let key in member.relations) {
+                                if (typeof member.relations[key] === 'string') {
+                                    member.relations[key] = this.familyIndex[member.relations[key]];
+                                }
+                                if (Array.isArray(member.relations[key])) {
+                                    for (let i = 0; i < member.relations[key].length; i++) {
+                                        member.relations[key][i] = this.familyIndex[member.relations[key][i]];
+                                    }
+                                }
+                            }
+                            this.familyIndex[member.name].applyRelations(member.relations);
+                        }
+                    });
+                }
+                if (data.root) {
+                    this.root = this.familyIndex[data.root];
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+        }
+    }
+
+    /**
+     * Cleans all the family tree. After save there will be empty database.
+     *
+     * @since 1.0.1
+     *
+     */
+    public clean() {
+        this.root=null;
+        this.familyIndex={};
+    }
+
+    /**
+     * Saves family tree to a JSON file - database
+     *
+     * @since 1.0.1
+     *
+     */
+    public async save() {
+        if (this.dbPath) {
+            const data={
+                root: this.root && this.root.getName() || null,
+                members: await Promise.all(Object.keys(this.familyIndex).map(async (name)=>{
+                    const member=this.findByName(name);
+                    return {
+                        name: member.getName(),
+                        gender: member.getGender(),
+                        birthDate: member.getBirthDate(),
+                        relations: member.exportRelations()
+                    }
+                }))
+            }
+            return fs.promises.writeFile(this.dbPath, JSON.stringify(data));
         }
     }
 
@@ -62,6 +128,16 @@ export class Family {
         return null;
     }
 
+    /**
+     * Adds a child to a mather
+     *
+     * @since 1.0.0
+     * @param {string} motherName name of existing mother
+     * @param {string} name name of the child being added
+     * @param {GenderType} gender gender of the child being added
+     * @returns {FamilyMember} instance of the added family member
+     *
+     */
     public addChild (motherName:string, name:string, gender:GenderType) {
         const mother = this.findByName(motherName);
         if (!mother)
@@ -80,9 +156,15 @@ export class Family {
         return this.familyIndex[name];
     }
 
-    public getRoot = () => this.root;
-    public findByName = (name: string) => this.familyIndex[name];
-
+    /**
+     * Relationship finder
+     *
+     * @since 1.0.0
+     * @param {string} personName name of a person to find
+     * @param {string} relationName name of the relationship listed in RelationTypes
+     * @returns {string[]} list of names in relationship
+     *
+     */
     public async getRelationship (personName: string, relationName: RelationType): Promise <string[]> {
         const person = this.findByName(personName);
         if (!person)
@@ -93,4 +175,7 @@ export class Family {
         const relationship = await person[relationMethod].call(person);
         return relationship.map((person:FamilyMember) => person.getName());
     }
+
+    public getRoot = () => this.root;
+    public findByName = (name: string) => this.familyIndex[name];
 }

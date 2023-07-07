@@ -1,6 +1,7 @@
 "use strict";
 
-import {GenderType, MembersType, ERRORS, MALE, Relations, FEMALE, SortFamilyMembers} from './definitions';
+import {GenderType, MembersType, ERRORS, MALE, Relations, FEMALE} from './definitions';
+import {SortFamilyMembers} from './decorators';
 
 export class FamilyMember {
     protected name: string;
@@ -11,18 +12,28 @@ export class FamilyMember {
     protected children: MembersType = null;
     protected spouse: FamilyMember = null;
 
-    constructor(name: string, gender: GenderType, birthDate?: Date|string, relations?: Relations) {
+    constructor(name: string, gender: GenderType, birthDate?: Date|string) {
         this.name = name;
         this.gender = gender;
         this.children = [];
         this.birthDate = birthDate && new Date(birthDate) || new Date();
-        relations && this.applyRelations(relations).then(null);
+        if (gender!==MALE && gender!==FEMALE)
+            throw ERRORS.NO_SUCH_GENDER;
     }
 
-    protected async applyRelations(relations: Relations) {
+    /**
+     * Sets the relations after the family tree is read from JSON file
+     *
+     * @since 1.0.1
+     * @param {Relations} relations object of relations to apply with corresponding keys
+     *
+     */
+    public applyRelations(relations: Relations) {
         for (let relation in relations) {
             if (this[relation]===null) {
-                this[relation] = await relations[relation];
+                this[relation] = relations[relation];
+            } else if (Array.isArray(this[relation]) && this[relation].length===0 && Array.isArray(relations[relation])) {
+                relations[relation].map(child=>this[relation].push(child));
             }
         }
     }

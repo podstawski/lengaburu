@@ -1,10 +1,10 @@
 {
   "name": "lengaburu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node JS backend interview for BarBooks",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node dist/app.js",
+    "start": "tsc && node dist/index.js",
     "test": "mocha --require ts-node/register --extensions ts,tsx src 'test/**/*.{ts,tsx}'",
     "testing": "mocha --require ts-node/register --extensions ts,tsx --watch --watch-files src 'test/**/*.{ts,tsx}'",
     "build": "tsc"

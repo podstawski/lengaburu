@@ -1,7 +1,6 @@
 "use strict";
 
 import {FamilyMember} from "./member";
-import type = Mocha.utils.type;
 export const MALE:string = 'Male';
 export const FEMALE:string = 'Female';
 export const DEFAULT_ROOT_AGE = 350;
@@ -13,7 +12,7 @@ export type MembersType = (Promise<FamilyMember> | FamilyMember)[];
 export const RelationTypes = ['Siblings', 'Maternal-Aunt', 'Sister-In-Law'];
 export type RelationType =  (typeof RelationTypes)[number];
 
-export const DB_DIR:string = '../db';
+export const DB_DIR:string = 'json_db';
 export const RESOURCES_DIR:string = '../resources';
 
 export type Relations = {
@@ -59,21 +58,20 @@ export const ERRORS: {[s: string]: Error} = {
         code: 404,
         message: 'We don\'t support given relation',
         short: 'RELATIONSHIP_NOT_FOUND'
-    }
-}
-
-export const SortFamilyMembers = () => {
-    return (target: any, name: string, descriptor: any) => {
-        const method = descriptor && typeof(descriptor.value)==='function' && descriptor.value;
-
-        descriptor.value = function (...args) {
-            const result = method.apply(this, args);
-            return Array.isArray(result) ? result.sort((a:FamilyMember, b:FamilyMember)=> {
-                const aBirthDate = a.getBirthDate();
-                const bBirthDate = b.getBirthDate();
-                return aBirthDate > bBirthDate ? 1 : (aBirthDate < bBirthDate ? -1 : 0);
-            }) : result;
-        }
-
+    },
+    'COMMAND_NOT_FOUND': {
+        code: 404,
+        message: 'We don\'t know this command',
+        short: 'COMMAND_NOT_FOUND'
+    },
+    'NOT_ENOUGH_PARAMETERS': {
+        code: 400,
+        message: 'Not enough parameters',
+        short: 'NOT_ENOUGH_PARAMETERS'
+    },
+    'NO_SUCH_GENDER': {
+        code: 400,
+        message: 'The gender should be either Male or Female',
+        short: 'NO_SUCH_GENDER'
     }
 }
