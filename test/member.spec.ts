@@ -40,4 +40,5 @@ describe("Family members tests", () => {
         assert.equal(flora.getMother(), margret);
         assert.equal(flora.getFather(), arthur);
     });
+
 });

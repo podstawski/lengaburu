@@ -50,4 +50,10 @@ describe("Family tests", () => {
         const relatives = await family.getRelationship(name,'Sister-In-Law');
         assert.equal(relatives.join(' '), 'Darcy Alice');
     });
+
+    it("get Flora\'s descendants in async way", async () => {
+        const flora = family.findByName('Flora');
+        const descendants = await flora.Descendants();
+        assert.equal(descendants.map((descendant:FamilyMember)=>descendant.getName()).join(' '),'Victoire Dominique Louis Minerva Remus');
+    });
 });

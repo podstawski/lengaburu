@@ -136,4 +136,12 @@ export class FamilyMember {
         const siblingsWives = this.Brothers().filter((brother:FamilyMember)=>brother.getSpouse()).map((brother:FamilyMember)=>brother.getSpouse());
         return spouseSisters.concat(siblingsWives);
     }
+
+    @SortFamilyMembers(true)
+    public async Descendants(): Promise <MembersType> {
+        const children=this.getChildren()||[];
+        return <Promise<MembersType>> children.reduce( (aggregatedDescendants: Promise<MembersType>, child: FamilyMember) => {
+            return child.Descendants().then(async (descendants:MembersType)=>descendants.concat(await aggregatedDescendants));
+        }, Promise.resolve(children));
+    }
 }

@@ -3,11 +3,10 @@
 import {FamilyMember} from "./member";
 export const MALE:string = 'Male';
 export const FEMALE:string = 'Female';
-export const DEFAULT_ROOT_AGE = 350;
-export const DEFAULT_GENERATION_DIFF = 30;
-
+export const DEFAULT_ROOT_AGE:number = 350;
+export const DEFAULT_GENERATION_DIFF:number = 30;
 export type GenderType = typeof MALE | typeof FEMALE;
-export type MembersType = (Promise<FamilyMember> | FamilyMember)[];
+export type MembersType = FamilyMember[];
 
 export const RelationTypes = ['Siblings', 'Maternal-Aunt', 'Sister-In-Law'];
 export type RelationType =  (typeof RelationTypes)[number];
